@@ -14,7 +14,9 @@ Restaurant.prototype.reservarHorario = function(horarioReservado) {
             this.horarios.splice(i, 1);
             return;
         }
-    }
+      }
+    //this.horarios =  this.filter(this => this.horarios !== horarioReservado);
+
 }
 
 Restaurant.prototype.calificar = function(nuevaCalificacion) {

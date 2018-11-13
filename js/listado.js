@@ -1,4 +1,4 @@
-var restaurant = require('restaurant.js');
+
 
 var Listado = function(restaurantes) {
     this.restaurantes = restaurantes;
@@ -20,6 +20,10 @@ Listado.prototype.calificarRestaurant = function(id, calificacion) {
 
 //Dado un id, busca el objeto del listado que tiene ese id
 Listado.prototype.buscarRestaurante = function(id) {
+    if(isNaN(id)) {
+      return "No se ha encontrado ningún restaurant"; // Agregado por Cristian Sansó.
+    }
+
     for (var i = 0; i < this.restaurantes.length; i++) {
         if (this.restaurantes[i].id === id) {
             return this.restaurantes[i]

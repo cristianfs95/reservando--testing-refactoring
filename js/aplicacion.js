@@ -1,6 +1,3 @@
-ver restaurant = require('restaurant.js'),
-    listado    = require('listado.js');
-
 var Aplicacion = function(listado) {
         this.listado = listado;
         this.dibujarListado(listado.restaurantes)
