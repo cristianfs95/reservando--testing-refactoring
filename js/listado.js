@@ -20,21 +20,27 @@ Listado.prototype.calificarRestaurant = function(id, calificacion) {
 
 //Dado un id, busca el objeto del listado que tiene ese id
 Listado.prototype.buscarRestaurante = function(id) {
-    if(isNaN(id)) {
-      return "No se ha encontrado ningún restaurant"; // Agregado por Cristian Sansó.
-    }
-
-    for (var i = 0; i < this.restaurantes.length; i++) {
+    if(isNaN(id)) { return "No se ha encontrado ningún restaurant" }
+    /*    for (var i = 0; i < this.restaurantes.length; i++) {
         if (this.restaurantes[i].id === id) {
             return this.restaurantes[i]
         }
-    }
-    return "No se ha encontrado ningún restaurant";
+    }*/ //BLOQUE FACTORIZADO
+
+    var restaurantFiltrado = this.restaurantes.find(restaurant => restaurant.id == id);
+
+    return restaurantFiltrado !== undefined? restaurantFiltrado : "No se ha encontrado ningún restaurant";
+}
+
+function eliminarElementosRepetidos(array) {
+    return array.filter(function(elem, index, self) {
+        return index === self.indexOf(elem);
+    });
 }
 
 //Obtiene todas las ciudades de los restaurantes sin repetidos
-Listado.prototype.obtC = function() {
-    //Array donde se van a ir agregando las ciudades (van a estar repetidas)
+Listado.prototype.obtenerCiudades = function() {
+/*    //Array donde se van a ir agregando las ciudades (van a estar repetidas)
     var c = [];
     //Se recorre el array de restaurantes y se va agregando al array creado, todas las ubicaciones o ciudades encontradas
     for (var i = 0; i < this.restaurantes.length; i++) {
@@ -45,12 +51,20 @@ Listado.prototype.obtC = function() {
         return index === self.indexOf(elem);
     });
 
-    return c2.sort();
+    return c2.sort();*/ //BLOQUE FACTORIZADO.
+
+    //Array donde se van a agregar las ciudades
+    var ciudades = this.restaurantes.map(function(restaurant){
+        return restaurant.ubicacion;
+    });
+
+    // Devolvemos los elementos ordenados y sin repetir.
+    return eliminarElementosRepetidos(ciudades).sort(); // FACTORIZACIÓN.
 }
 
 //Obtiene todos los rubros de los restaurantes sin repetidos. Su funcionamiento es similar a obtC()
-Listado.prototype.obtR = function() {
-    var r = [];
+Listado.prototype.obtenerRubros = function() {
+    /*    var r = [];
     for (var i = 0; i < this.restaurantes.length; i++) {
         r.push(this.restaurantes[i].rubro);
     }
@@ -59,14 +73,21 @@ Listado.prototype.obtR = function() {
         return index === self.indexOf(elem);
     });
 
-    return r2.sort();
+    return r2.sort();*/ //BLOQUE FACTORIZADO.
+    //Array donde se van a agregar los rubros.
+    var rubros =  this.restaurantes.map(function(restaurant){
+        return restaurant.rubro;
+    });
+    // Devolvemos los elementos ordenados y sin repetir.
+    return eliminarElementosRepetidos(rubros).sort();
+
 }
 
 //Obtiene todos los horarios de los restaurantes (sin repetidos). Está funcionalidad es un poco más compleja ya que un restaurante
 //tiene un array de horarios. Al buscarlos todos vamos a pasar a tener un array de arrays que luego vamos a tener que
 //convertir en uno solo
-Listado.prototype.obtH = function() {
-    //En este array se van a cargar los arrays de horarios, que luego vamos convertir en un solo array
+Listado.prototype.obtenerHorarios = function() {
+    /*//En este array se van a cargar los arrays de horarios, que luego vamos convertir en un solo array
     var arregloH = [];
     //Recorremos el array de restaurantes y vamos agregando todos los array de horarios
     for (var i = 0; i < this.restaurantes.length; i++) {
@@ -86,7 +107,20 @@ Listado.prototype.obtH = function() {
         return index === self.indexOf(elem);
     });
 
-    return h2.sort();
+    return h2.sort();*/ //BLOQUE FACTORIZADO
+    //Cargamos al array los horarios y lo convertimos en uno sólo.
+    var arregloHorarios = this.restaurantes.map(function(restaurant){
+        return restaurant.horarios;
+    });
+    //Cargar los elementos al array.
+    var horarios = [];
+    arregloHorarios.forEach(function(elem) {
+        elem.forEach(function(hor) {
+            horarios.push(hor)
+        });
+    });
+    // Devolvemos los elementos ordenados y sin repetir.
+    return eliminarElementosRepetidos(horarios).sort();
 }
 
 //Función que recibe los filtros que llegan desde el HTML y filtra el arreglo de restaurantes.
@@ -96,11 +130,9 @@ Listado.prototype.obtenerRestaurantes = function(filtroRubro, filtroCiudad, filt
     if (filtroRubro !== null) {
         restaurantesFiltrados = restaurantesFiltrados.filter(restaurant => restaurant.rubro == filtroRubro);
     }
-
     if (filtroCiudad !== null) {
         restaurantesFiltrados = restaurantesFiltrados.filter(restaurant => restaurant.ubicacion == filtroCiudad);
     }
-
     if (filtroHorario !== null) {
         restaurantesFiltrados = restaurantesFiltrados.filter(function(res) {
             return res.horarios.some(horario => horario == filtroHorario);
