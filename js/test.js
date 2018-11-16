@@ -1,33 +1,51 @@
 
 // Función que devuelve un número al azar mayor al entregado por parámetro.
-function randomNumberBiggerThan(number, maximum = 10) {
-    do {
-        var result = (Math.floor(Math.random() * 10) + number);
-    } while (result > maximum);
+function randomNumberGreaterThan(number, maximum = 10) {
+    if(number === 10){
+        return 10;
+    }
+    var result = 0;
+    var flag1 = false, flag2=false;
+    while(true) {
+        result = (Math.floor(Math.random() * 10) + number);
+        if(result != number){
+            flag1 = true;
+        }
+        if(result <= maximum){
+            flag2 = true;
+        }
+        if(flag1==true && flag2==true){
+            break;
+        }
+        flag1 = false;
+        flag2 = false;
+    }
     return result;
 };
+
+//Yo sé que quedaron muy petes estas funciones, pero haciendola de
+//una forma más estética no me estaban funcionando bien y cuando algo anda, mejor no tocar.
 
 // Función que devuelve un número al azar menor al entregado por parámetro.
 function randomNumberLessThan(number) {
-    do {
-        var result = (Math.floor(Math.random() * 10) + 1);
-    } while (result > number);
+    var result = 0;
+    var flag1 = false, flag2=false;
+    while(true) {
+        result = (Math.floor(Math.random() * 10) + 1);
+        if (result != number){
+            flag1 = true;
+        }
+        if (result < number){
+            flag2 = true;
+        }
+        if(flag1==true && flag2==true){
+            break;
+        }
+        flag1 = false;
+        flag2 = false;
+    }
     return result;
 };
-
-/*
---EXAMPLE
-var expect = chai.expect;
-describe('Test de suma', function() {
-    it('resultado positivo', function() {
-            var resultado = suma(2,3);
-            expect(resultado).to.be.above(0);
-    })
-    it('resultado negativo', function() {
-            var resultado = suma(-1,-3);
-            expect(0).to.be.above(resultado);
-    })
-})*/
 
 var expect = chai.expect
     assert = chai.assert;
@@ -85,8 +103,7 @@ describe('Test función calificar().', function() {
         var calificaciones = [1, 3, 5, 6, 6];
         var pizzaTest = new Restaurant(undefined,undefined,undefined,undefined,undefined,undefined,calificaciones);
         var puntuacionAnterior = pizzaTest.obtenerPuntuacion();
-        var calificacion = randomNumberBiggerThan(puntuacionAnterior)
-        console.log("Nota anterior: " + puntuacionAnterior + " Calificación: " + calificacion  + " Nota posterior: " + pizzaTest.obtenerPuntuacion())
+        var calificacion = randomNumberGreaterThan(puntuacionAnterior)
 
         pizzaTest.calificar(calificacion);
         expect(pizzaTest.obtenerPuntuacion()).to.be.at.most(puntuacionAnterior);
@@ -96,11 +113,10 @@ describe('Test función calificar().', function() {
         var calificaciones = [1, 3, 5, 6, 6];
         var pizzaTest = new Restaurant(undefined,undefined,undefined,undefined,undefined,undefined,calificaciones);
         var puntuacionAnterior = pizzaTest.obtenerPuntuacion();
-        var calificacion = randomNumberLessThan(puntuacionAnterior)
-        console.log("Nota anterior: " + puntuacionAnterior + " Calificación: " + calificacion  + " Nota posterior: " + pizzaTest.obtenerPuntuacion())
+        var calificacion = randomNumberLessThan(puntuacionAnterior);
 
         pizzaTest.calificar(calificacion);
-        expect(pizzaTest.obtenerPuntuacion()).to.be.at.least(puntuacionAnterior);
+        expect(puntuacionAnterior).to.be.at.least(pizzaTest.obtenerPuntuacion());
     })
 
     it('Dada la calificación 10, que suba el promedio.', function() {
@@ -108,19 +124,17 @@ describe('Test función calificar().', function() {
         var pizzaTest = new Restaurant(undefined,undefined,undefined,undefined,undefined,undefined,calificaciones);
         var puntuacionAnterior = pizzaTest.obtenerPuntuacion();
         var calificacion = 10;
-        console.log("Nota anterior: " + puntuacionAnterior + " Calificación: " + calificacion  + " Nota posterior: " + pizzaTest.obtenerPuntuacion())
 
         pizzaTest.calificar(calificacion);
-        //expect(pizzaTest.obtenerPuntuacion()).to.be.above(puntuacionAnterior);
+        expect(pizzaTest.obtenerPuntuacion()).to.be.above(puntuacionAnterior);
 
-    }) // Inicialmente estaba mal calculado porque al ser la nota 10, no aumentaba el promedio. Todavía no se corrige.
+    }) // Inicialmente estaba mal calculado porque al ser la nota 10, no aumentaba el promedio. Se corrige.
 
     it('Que el promedio no exceda el 10.', function() {
         var calificaciones = [1, 3, 5, 6, 6];
         var pizzaTest = new Restaurant(undefined,undefined,undefined,undefined,undefined,undefined,calificaciones);
         var puntuacionAnterior = pizzaTest.obtenerPuntuacion();
         var calificacion = 10;
-        console.log("Nota anterior: " + puntuacionAnterior + " Calificación: " + calificacion  + " Nota posterior: " + pizzaTest.obtenerPuntuacion())
 
         pizzaTest.calificar(calificacion);
         expect(pizzaTest.obtenerPuntuacion()).to.be.below(10);
@@ -132,7 +146,7 @@ describe('Test función calificar().', function() {
         pizzaTest.calificar(-5);
         expect(pizzaTest.obtenerPuntuacion()).to.be.above(0);
     })
-})
+})  // ✓ Done.
 
 describe('Test función buscarRestaurante(id).', function() {
 
@@ -149,7 +163,7 @@ describe('Test función buscarRestaurante(id).', function() {
         expect(listado.buscarRestaurante("?!")).to.be.deep.equal("No se ha encontrado ningún restaurant");
         expect(listado.buscarRestaurante("")).to.be.deep.equal("No se ha encontrado ningún restaurant");
     }) // Inicialmente no tenía control para valores que no eran nùmeros. Se corrige.
-})
+})  // ✓ Done.
 
 describe('Test función obtenerRestaurantes().', function() {
 
@@ -172,7 +186,7 @@ describe('Test función obtenerRestaurantes().', function() {
     it('Utilizando filtros Ciudad, Rubro y Horario', function() {
         expect(listado.obtenerRestaurantes('Pasta','Berlín','12:00').length).to.equal(1);
     })
-})
+})  // ✓ Done.
 
 describe('Test módulo reserva.', function() {
 
@@ -185,24 +199,4 @@ describe('Test módulo reserva.', function() {
         expect(listadoDeReservas[0].precioFinal()).to.equal(2310);
         expect(listadoDeReservas[1].precioFinal()).to.equal(100);
     })
-});
-
-
-// PREGUNTAS A HACER
-//  - Me dice que el objeto restaurante no esta definido cuando en verdad lo estoy importando.
-//  - Cuando ejecuto una función tiene un scope que no respeta el orden secuencial.
-//  - Armé bien las funciones biggerthan y lessthan?
-//
-//  - if(this.restaurantes.find(id)){
-//        this.restaurantes.find(id)
-//    } else {
-//        return "No se ha encontrado ningún restaurant";
-//    }
-//      &
-//    var arregloHorarios = this.restaurantes.map(function(restaurant){
-//        return restaurant.horarios;
-//    });
-//    Se puede escribir con función flecha?
-//
-//  - ¿Se podría utilizar el patron módulo a restaurant.js?
-//  - ¿ VAR, LET y CONST ?
+});  // ✓ Done.
